@@ -26,7 +26,7 @@ def install_hook() -> bool:
         print("This is not a git repo yet! ")
         return False
     
-     hook_script = """#!/bin/sh
+    hook_script = """#!/bin/sh
 # Git Interviewer Hook
 exec git-interviewer interview
 """
