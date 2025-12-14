@@ -22,7 +22,7 @@ def install_hook() -> bool:
     """ Installs pre commit hook """
     hook_path = ".git/hooks/pre-commit"
     
-    if not as.path.exists(".git"): 
+    if not os.path.exists(".git"): 
         print("This is not a git repo yet! ")
         return False
     
@@ -30,4 +30,9 @@ def install_hook() -> bool:
 # Git Interviewer Hook
 exec git-interviewer interview
 """
-    
+    with open(hook_path, "w") as f:
+        f.write(hook_script)
+        
+    os.chmod(hook_path, 0o755) # owner rwx, groups read and execute, others read and execute
+    print(f"Pre-commit hook installed at {hook_path}")
+    return True
