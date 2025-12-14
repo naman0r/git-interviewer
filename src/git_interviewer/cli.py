@@ -53,7 +53,17 @@ def interview():
     
     console.print(Panel(question, title="Interviewer", border_style="blue"))
     
-    answer = Prompt.ask(f"[bold] your answer [/bold]")
+    # We cannot use Prompt.ask() directly because git hooks often have detached stdin.
+    # We must explicitly read from /dev/tty to get user input.
+    try:
+        # We need to print the prompt to the console, but read from TTY
+        console.print("[bold]Your Answer: [/bold]", end="")
+        with open("/dev/tty", "r") as tty:
+            answer = tty.readline().strip()
+    except OSError:
+        # Fallback if /dev/tty is not available (e.g. CI environments)
+        console.print("[yellow]Warning: Cannot access terminal for input. Skipping interview.[/yellow]")
+        raise typer.Exit(code=0)
     
     # validation: 
     if len(answer.split()) < 3: 
@@ -67,6 +77,43 @@ def interview():
     console.print("[bold green]Good answer, commit allowed[/bold green]")
     raise typer.Exit(code=0)
 
-        
+
+@app.command()
+def help(): 
+    """ Display help information """
+    console.print(Panel(
+        "Git Interviewer is a pre-commit hook that interviews you about your code before letting you commit.",
+        title="Git Interviewer",
+        border_style="blue"
+    ))
+    
+    console.print("Commands:")
+    console.print("  init      Install the pre-commit hook")
+    console.print("  interview Analyze staged changes and interview the developer")
+    console.print("  help      Display help information")
+    console.print("  version   Display version information")
+    
+    console.print("\nFor more details, see the documentation at [link]https://github.com/yourusername/git-interviewer[/link]")
+    
+    
+@app.command()
+def mode(): 
+    """ Set the interviewer mode or display current mode"""
+    
+    if not GIT_INTERVIEWER_MODE: 
+        console.print("[yellow]No mode set. Defaulting to 'nice'.[/yellow]")
+        return
+    
+    console.print(f"[bold green]Current mode: {GIT_INTERVIEWER_MODE}[/bold green]")
+    console.print("Available modes:")
+    for mode in PERSONAS.keys():
+        console.print(f"  {mode}")
+    console.print("To change mode, run: [bold]git-interviewer mode <mode>[/bold]")
+    
+@app.command()
+def version(): 
+    """ Display version information """
+    console.print(f"[bold green]Git Interviewer v{__version__}[/bold green]")
+    
 
 
