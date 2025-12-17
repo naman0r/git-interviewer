@@ -42,3 +42,11 @@ If you build this, your repo will be **dramatically** higher quality, and everyo
 
 Feel free to open issues, request new personas, or contribute new interview logic!
 
+
+
+## See Git-Interviewer in action! 
+
+<img width="1354" height="464" alt="image" src="https://github.com/user-attachments/assets/c6d53265-4c43-4507-bcd6-7077164b085e" />
+
+
+
