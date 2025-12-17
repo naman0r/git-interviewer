@@ -46,7 +46,19 @@ Feel free to open issues, request new personas, or contribute new interview logi
 
 ## See Git-Interviewer in action! 
 
-<img width="1354" height="464" alt="image" src="https://github.com/user-attachments/assets/c6d53265-4c43-4507-bcd6-7077164b085e" />
+<img  height="200" alt="image" src="https://github.com/user-attachments/assets/c6d53265-4c43-4507-bcd6-7077164b085e" />
+Graceful commit allowed, no friction
+<br/>
+<img height="200" alt="image" src="https://github.com/user-attachments/assets/0b9eaf2b-2199-41d2-9b36-907af9d633a6" />
+
+Asks a question ^
+<br/>
+<img  height="200" alt="image" src="https://github.com/user-attachments/assets/267fc263-39fa-4e8b-86c2-19f932af2ae5" />
+Answer too short -> graceful termination, commit not allowed.
+
+
+
+
 
 
 
