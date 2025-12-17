@@ -3,14 +3,44 @@ from rich.console import Console # allows us to create a console instance
 from rich.panel import Panel # allows us to create a panel instance
 from rich.prompt import Prompt # allows us to create a prompt instance
 import sys
+import os
 from .config import get_api_key, GIT_INTERVIEWER_MODE
 from git_interviewer.git_utils import get_staged_diff, install_hook
 from .llm import generate_question
+from .personas import PERSONAS
 
 
 
-app = typer.Typer() # initialization of core CLI app, returns a callable object
+# app = typer.Typer() # initialization of core CLI app, returns a callable object
+app = typer.Typer(
+    rich_markup_mode="rich"
+)
 console = Console()
+
+
+@app.callback()
+def main(ctx: typer.Context):
+    """
+    [bold blue]Git Interviewer 🎤[/bold blue]
+
+    A pre-commit hook that acts as a technical interviewer.
+    It blocks your commits until you answer a question about your code changes.
+
+    [bold]Usage:[/bold]
+    
+    1. Initialize in a repo: [green]git-interviewer init[/green]
+    2. Commit normally: [green]git commit -m "..."[/green]
+    
+    [bold]Configuration:[/bold]
+    
+    Set [cyan]GEMINI_API_KEY[/cyan] and [cyan]GIT_INTERVIEWER_MODE[/cyan] env vars.
+
+    [bold]Bypass:[/bold]
+    
+    To skip the interview, use: [yellow]git commit --no-verify[/yellow]
+    """
+    pass
+
 
 @app.command() # decorator to register the function as a CLI command
 def init(): 
@@ -92,23 +122,43 @@ def help():
     console.print("  interview Analyze staged changes and interview the developer")
     console.print("  help      Display help information")
     console.print("  version   Display version information")
+    console.print("  --no-verify   append this to your git commit -m "" message to bypass git-interviewer")
+    
     
     console.print("\nFor more details, see the documentation at [link]https://github.com/yourusername/git-interviewer[/link]")
     
     
 @app.command()
-def mode(): 
-    """ Set the interviewer mode or display current mode"""
-    
-    if not GIT_INTERVIEWER_MODE: 
-        console.print("[yellow]No mode set. Defaulting to 'nice'.[/yellow]")
+def mode(
+    name: str = typer.Argument(None, help="The name of the persona to switch to."),
+    list_modes: bool = typer.Option(False, "--list", "-l", help="List available personas.")
+):
+    """
+    View or set the interviewer persona.
+    """
+    if list_modes or name is None:
+        console.print("[bold]Available Modes:[/bold]")
+        for mode_name, description in PERSONAS.items():
+            current_marker = " (current)" if mode_name == GIT_INTERVIEWER_MODE else ""
+            console.print(f"- [green]{mode_name}[/green]{current_marker}: {description[:60]}...")
         return
-    
-    console.print(f"[bold green]Current mode: {GIT_INTERVIEWER_MODE}[/bold green]")
-    console.print("Available modes:")
-    for mode in PERSONAS.keys():
-        console.print(f"  {mode}")
-    console.print("To change mode, run: [bold]git-interviewer mode <mode>[/bold]")
+
+    if name not in PERSONAS:
+        console.print(f"[red]Error:[/red] Mode '{name}' not found.")
+        console.print("Available modes: " + ", ".join(PERSONAS.keys()))
+        raise typer.Exit(code=1)
+
+    # Write to git config
+    try:
+        import subprocess
+        subprocess.run(
+            ["git", "config", "git-interviewer.mode", name],
+            check=True
+        )
+        console.print(f"[green]✅ Switched to mode: {name}[/green] (saved to git config)")
+    except subprocess.CalledProcessError:
+        console.print("[red]Error:[/red] Failed to update git config.")
+        raise typer.Exit(code=1)
     
 @app.command()
 def version(): 
