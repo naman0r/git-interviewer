@@ -6,6 +6,7 @@ Before each commit, it analyzes your staged changes, generates interview-style q
 
 This forces deeper understanding, intentional commits, and better engineering discipline — but in a fun way.
 
+View here: https://pypi.org/project/git-interviewer/1.0.0/
 ---
 
 ## Why Git Interviewer?
@@ -57,6 +58,7 @@ Asks a question ^
 Answer too short -> graceful termination, commit not allowed.
 
 <img width="1906" height="1254" alt="image" src="https://github.com/user-attachments/assets/496e9491-e087-4bad-a2f7-2e1d1dedec16" />
+
 
 
 
